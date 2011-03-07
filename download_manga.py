@@ -22,6 +22,7 @@ if __name__ == "__main__":
 	for i in [ '/\d*-\d*-\d*/%s/chapter-\d*.html'  % (name), '/%s/\d\d*'  % (name)	]: # mangareader utiliza entrambe le espressioni regolari ^_^
 		for y_link in  y.fetch_links(str(i)): # scorre la lista dei link trovati
 			lista.append(y.build_name(str(y_link)))
+	lista.sort() # basic sort..
 	for chapter in lista:
 		download_chapter(chapter)
 			
