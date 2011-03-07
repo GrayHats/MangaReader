@@ -72,7 +72,7 @@ class mangareader:
 			return 0
 
 	def convert_name(self, manga):
-		return manga.replace(' - ',' ').replace(' ','-').lower()
+		return manga.replace("'","").replace(' - ',' ').replace(' ','-').lower()
 
 	def fetch_title(self):
 		raw_title = self.soup.title.contents[0]
