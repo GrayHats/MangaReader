@@ -10,8 +10,8 @@ from datetime import datetime
 
 def download_img(links, title):
 	dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
-	dirmanga= dirname+'/manga/'
-	directory = dirmanga+title
+	dirmanga = os.path.join(dirname,'manga')
+	directory = os.path.join(dirmanga,title)
 	#retcode = subprocess.call([dirname+'/checkdir.sh', directory])
 	#if not os.path.isdir(dirmanga):
 	#	os.mkdir(dirmanga)
@@ -23,9 +23,8 @@ def download_img(links, title):
 		os.makedirs(directory)
 	os.chdir(dirmanga)
 	for link in links:
-		#retcode = subprocess.call(['/usr/bin/wget','-P', directory, str(link)])
-		file = link[link.rfind('/')+1:]
-		urllib.urlretrieve(str(link),directory+'/'+file)	
+		file_manga = link[link.rfind('/')+1:]
+		urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
 		print 'scaricato %s '% (str(link),)
 	try:
 		tar = tarfile.open(title+'.cbz', 'w')
