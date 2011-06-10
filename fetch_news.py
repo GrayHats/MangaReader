@@ -41,7 +41,7 @@ if __name__ == "__main__":
 	links=[]
 	for manga in manga_list: # scorriamo la lista dei manga
 		name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
-		for link in x.fetch_links('/%s/\d+' %(name,),'href',1):
+		for link in x.fetch_chapters_manga(nome):
 			links.append(link)
 	# check links against db
 	for link in links:

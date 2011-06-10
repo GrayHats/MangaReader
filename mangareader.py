@@ -166,7 +166,7 @@ class mangareader:
 
 		return list
 		'''
-		regex = re.compile('(?<=<a href=").*?' + nomemanga + '.*?(?=")')
+		regex = re.compile('(?<=href=").*?' + nomemanga + '.*?(?=")')
 		links=[]
 		for row in self.fetch_tag(regex):
 			links.append(self.build_name(row))
