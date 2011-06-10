@@ -1,11 +1,9 @@
-import urllib2
+#import urllib2
 import urllib
-from BeautifulSoup import BeautifulSoup
+#from BeautifulSoup import BeautifulSoup
 import re
 import sys, os
-import tarfile
-import shutil
-from datetime import datetime
+#from datetime import datetime
 
 '''
 work in progress, obiettivi
@@ -42,6 +40,8 @@ class logfile:
 
 
 def download_img(links, title):
+	import tarfile
+	import shutil
 	dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
 	dirmanga = os.path.join(dirname,'manga')
 	directory = os.path.join(dirmanga,title)
@@ -75,7 +75,7 @@ def download_chapter(url_chapter):
 	#manga = x.fetch_title_manga()
 	#name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
 	title = x.convert_name(x.fetch_title_chapter())
-	pages = x.fetch_links_chapter()
+	pages = x.fetch_pages_chapter()
 	imgs=[]
 	imgs.append(x.fetch_link_img())
 	for page in pages[1:]: # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
@@ -146,7 +146,7 @@ class mangareader:
 		'''
 		return self.fetch_tag(self.rtitlechapter)
 	
-	def fetch_links_chapter(self):
+	def fetch_pages_chapter(self):
 		'''
 		ritorna i link delle pagine collegate al capitolo
 
@@ -159,6 +159,18 @@ class mangareader:
 
 	def fetch_link_img(self):
 		return self.fetch_tag(self.rimg)
+
+	def fetch_chapters_manga(self, nomemanga):
+		'''
+		ritorna i link dei capitoli collegate ad un manga
+
+		return list
+		'''
+		regex = re.compile('(?<=<a href=").*?' + nomemanga + '.*?(?=")')
+		links=[]
+		for row in self.fetch_tag(regex):
+			links.append(self.build_name(row))
+		return links
 
 	# old, da cancellare
 	def fetch_chapter(self):
