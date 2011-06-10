@@ -70,5 +70,5 @@ if __name__ == "__main__":
 		for link in links:
 				body += '\nDa scaricare %s:\n' % (link[0])
 	if body:
-		print body
+		#print body
 		send_mail(body,fromaddr, toaddr,subject)

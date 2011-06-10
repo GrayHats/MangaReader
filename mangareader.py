@@ -7,6 +7,23 @@ import tarfile
 import shutil
 from datetime import datetime
 
+def put(string):
+	sys.stdout.write(string + '\n')
+
+def put_err(string):
+	sys.stderr.write(string + '\n')
+
+
+class logfile:
+	def __init__(self, logfile):
+		self.logfile = open(logfile, 'a')
+
+	def logga(self, string):
+		self.logfile.write(string + '\n')
+
+	def close(self):
+		self.logfile.close()
+
 
 def download_img(links, title):
 	dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -25,7 +42,7 @@ def download_img(links, title):
 	for link in links:
 		file_manga = link[link.rfind('/')+1:]
 		urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
-		print 'scaricato %s '% (str(link),)
+		#print 'scaricato %s '% (str(link),)
 	try:
 		tar = tarfile.open(title+'.cbz', 'w')
 		tar.add(title)
@@ -43,6 +60,7 @@ def download_chapter(url_chapter):
 	name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
 	title = x.convert_name(str(x.fetch_links('%s \d\d*' % (manga), 'title')[0]))
 	#<option value="/fairy-tail/216/5">5</option>
+	pages = []
 	pages = x.fetch_links('/\d*-\d*-\d*/%s/.*html' %(name), 'option',1)	
 	if len(pages) == 0:
 		pages = x.fetch_links('/%s/\d\d*/\d\d*' %(name), 'option',1)	
@@ -58,7 +76,11 @@ def download_chapter(url_chapter):
 class mangareader:
 	def __init__(self, url):
 		''' fetch the page and parse with beatifulsoup'''
-		page = urllib2.urlopen(url)
+		try:
+			page = urllib2.urlopen(url)
+		except:
+			print "pagina non scaricata: %s" %(url, ) 
+			sys.exit(1)
 		self.soup = BeautifulSoup(page)	
 		#self.manga = self_title
 
