@@ -168,8 +168,10 @@ class mangareader:
 		'''
 		regex = re.compile('(?<=href=").*?' + nomemanga + '.*?(?=")')
 		links=[]
-		for row in self.fetch_tag(regex):
-			links.append(self.build_name(row))
+		rows = self.fetch_tag(regex)
+		if rows :
+			for row in :
+				links.append(self.build_name(row))
 		return links
 
 	# old, da cancellare

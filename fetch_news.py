@@ -41,8 +41,10 @@ if __name__ == "__main__":
 	links=[]
 	for manga in manga_list: # scorriamo la lista dei manga
 		name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
-		for link in x.fetch_chapters_manga(nome):
-			links.append(link)
+		rows = x.fetch_chapters_manga(name)
+		if rows :
+			for row in rows:
+				links.append(link)
 	# check links against db
 	for link in links:
 		link_t = (link,)
