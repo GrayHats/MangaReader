@@ -5,20 +5,6 @@ import re
 import sys, os
 
 
-'''
-work in progress, obiettivi
-
-- eliminare beautiful soup
-- compilare tutte le regen
-- dare na sistemata in generale
-- commentare il codice
-
-'''
-
-
-
-
-
 def stampa(string):
 	sys.stdout.write(string + '\n')
 
