@@ -6,7 +6,7 @@ import smtplib
 import sys, os
 from pysqlite2 import dbapi2 as sqlite3
 from ConfigParser import ConfigParser
-
+#from mangareader import stampa
 
 def send_mail(body, fromaddr, toaddr, subject):
 	body2 = "Subject: %s\n\n" %(subject,)
@@ -33,7 +33,6 @@ if __name__ == "__main__":
 	db = sqlite3.connect(database)
 	db.isolation_level = None
 	c = db.cursor()
-
 	body= ''				
 
 	# fetch new links from website
@@ -44,7 +43,7 @@ if __name__ == "__main__":
 		rows = x.fetch_chapters_manga(name)
 		if rows :
 			for row in rows:
-				links.append(link)
+				links.append(row)
 	# check links against db
 	for link in links:
 		link_t = (link,)

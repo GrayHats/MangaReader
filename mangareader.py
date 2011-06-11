@@ -3,7 +3,7 @@ import urllib
 #from BeautifulSoup import BeautifulSoup
 import re
 import sys, os
-#from datetime import datetime
+
 
 '''
 work in progress, obiettivi
@@ -19,10 +19,8 @@ work in progress, obiettivi
 
 
 
-stdout=1 # debug value
-def put(string):
-	if stdout:
-		sys.stdout.write(string + '\n')
+def stampa(string):
+	sys.stdout.write(string + '\n')
 
 def put_err(string):
 	sys.stderr.write(string + '\n')
@@ -51,6 +49,7 @@ def download_img(links, title):
 	try:
 		os.makedirs(directory)
 	except:
+		from datetime import datetime
 		now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		os.rename(directory, directory+now)
 		os.makedirs(directory)
@@ -81,8 +80,9 @@ def download_chapter(url_chapter):
 	for page in pages[1:]: # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
 		z = mangareader(page)
 		imgs.append(z.fetch_link_img())
-	download_img(imgs, title)
-	return 1
+	if download_img(imgs, title):
+		return 1
+	return 0
 
 class mangareader:
 	def __init__(self, url):
@@ -99,31 +99,20 @@ class mangareader:
 			sys.exit(1)
 		# compiled regex
 		self.rtitlemanga = re.compile('(?<=<title>).*?(?= Manga)')
-		self.rtitlechapter = re.compile('(?<=<title>).*?(?= \d+ - Read)')
+		self.rtitlechapter = re.compile('(?<=<title>).*?(?= - Read)')
 		self.rimg = re.compile('(?<=src=")http://.*jpg(?=")')
 		self.roption = re.compile('(?<=option value=").*?(?=")')
 
 	def fetch_tag(self, regex):
 		'''
 		semplice ricerca per regex
-		ritorna 0, stringa o lista
+		ritorna 0 oppure lista
 		'''
 		rows = regex.findall(self.page)
-		if len(rows) == 0:
-			return 0
-		if len(rows) == 1:
-			return rows[0] # regex per titoli e img dovrebbero sempre tornare 1 solo risultato, se non cambiano le cose
-		return rows # regex per options e links..
+		#if len(rows) == 0:
+			#return 0
+		return rows 
 
-
-
-	def looking_for(self, manga):
-		'''example: looking for Fairy Tail release'''
-		trovato = self.page.findall(text=re.compile('%s \d*' % (manga,)))
-		if trovato:
-			return trovato
-		else:
-			return 0
 
 	def convert_name(self, manga):
 		return manga.replace("'","").replace(' - ',' ').replace(' ','-').lower()
@@ -134,7 +123,7 @@ class mangareader:
 
 		return string
 		'''
-		return self.fetch_tag(self.rtitlemanga)
+		return self.fetch_tag(self.rtitlemanga)[0]
 
 	def fetch_title_chapter(self):
 		'''
@@ -144,7 +133,7 @@ class mangareader:
 
 		return string
 		'''
-		return self.fetch_tag(self.rtitlechapter)
+		return self.fetch_tag(self.rtitlechapter)[0]
 	
 	def fetch_pages_chapter(self):
 		'''
@@ -158,50 +147,24 @@ class mangareader:
 		return links
 
 	def fetch_link_img(self):
-		return self.fetch_tag(self.rimg)
+		return self.fetch_tag(self.rimg)[0]
 
 	def fetch_chapters_manga(self, nomemanga):
 		'''
 		ritorna i link dei capitoli collegate ad un manga
 
-		return list
+		return 0, list
 		'''
-		regex = re.compile('(?<=href=").*?' + nomemanga + '.*?(?=")')
+		regex = re.compile('(?<=href=")/' + nomemanga + '.*?(?=")')
 		links=[]
 		rows = self.fetch_tag(regex)
-		if rows :
-			for row in :
-				links.append(self.build_name(row))
+		if len(rows) == 0 :
+			return 0
+		for row in rows:
+			links.append(self.build_name(row))
 		return links
 
-	# old, da cancellare
-	def fetch_chapter(self):
-		raw_title = self.soup.title.contents[0]
-		p2=re.search('.*(?= - Read)', raw_title)
-		return p2.group(0)
-		##p4=re.compile('\d+$')   #appunto per trovare il numero di capitolo
 
-	# old, da cancellare
-	def fetch_links(self, regexpr, attr='href', convert=0):
-		'''Fetch links for a centain manga '''
-		## looking for links 
-		links = [] # they can be more than 1 :D
-		p = re.compile(regexpr)
-		if attr == 'option':
-			rows=self.soup.findAll(value=re.compile(regexpr))
-		elif attr == 'src':
-			rows=self.soup.findAll(src=re.compile(regexpr))
-		elif attr == 'title':
-			rows=self.soup.findAll('title')
-		else :
-			rows=self.soup.findAll(href=re.compile(regexpr))
-		if rows:
-			for row in rows:
-				if convert == 1:
-					links.append(self.build_name(p.findall(str(row))[0]))
-					continue
-				links.append(p.findall(str(row))[0])
-		return links
 
 	def build_name (self, link):
 		'''
