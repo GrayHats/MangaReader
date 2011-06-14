@@ -72,6 +72,9 @@ def download_chapter(url_chapter):
 		z = mangareader(page)
 		imgs.append(z.fetch_link_img())
 	stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
+	if len(pages) != len(imgs):
+		stampa_err('ERRORE: numero di pagine e immagini differente nel capitolo: %s' %(url_chapter,))
+		sys.exit(-1)
 	#for img in imgs:
 	#	stampa('   -> %s' % img)
 	if download_img(imgs, title):
