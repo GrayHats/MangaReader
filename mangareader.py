@@ -141,13 +141,21 @@ class mangareader:
 
 		return 0, list
 		'''
-		regex = re.compile('(?<=href=")/' + nomemanga + '.*?(?=")')
+		regex1 = re.compile('(?<=href=")/' + nomemanga + '.*?(?=")')
+		regex2 = re.compile('(?<=href=")/\d*-\d*-\d*/' + nomemanga + '/chapter-\d*.html' + '(?=")')
 		links=[]
-		rows = self.fetch_tag(regex)
-		if len(rows) == 0 :
+		rows1 = self.fetch_tag(regex1)
+		rows2 = self.fetch_tag(regex2)
+		if len(rows1) != 0 :
+			for row in rows1:
+				if row not in links:
+					links.append(self.build_name(row))
+		if len(rows2) != 0 :
+			for row in rows2:
+				if row not in links:
+					links.append(self.build_name(row))
+		if len(links) == 0:
 			return 0
-		for row in rows:
-			links.append(self.build_name(row))
 		return links
 
 
