@@ -8,7 +8,7 @@ import sys, os
 def stampa(string):
 	sys.stdout.write(string + '\n')
 
-def put_err(string):
+def stampa_err(string):
 	sys.stderr.write(string + '\n')
 
 
@@ -42,16 +42,21 @@ def download_img(links, title):
 	os.chdir(dirmanga)
 	for link in links:
 		file_manga = link[link.rfind('/')+1:]
-		urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
-		#print 'scaricato %s '% (str(link),)
+		try:
+			urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
+			stampa('  -> scaricato: %s '% (str(link),))
+		except:
+			stampa_err('  -> ERRORE nello scaricare: %s '% (str(link),))
+			sys.exit(-1)
 	try:
 		tar = tarfile.open(title+'.cbz', 'w')
 		tar.add(title)
 		tar.close()
+		stampa('  Creato %s\n' %(title+'.cbz',))
 		shutil.rmtree(title)
 	except:
 		os.chdir(dirname)
-		return 0
+		sys.exit(-1)
 	os.chdir(dirname)
 	return 1
 
@@ -66,9 +71,12 @@ def download_chapter(url_chapter):
 	for page in pages[1:]: # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
 		z = mangareader(page)
 		imgs.append(z.fetch_link_img())
+	stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
+	#for img in imgs:
+	#	stampa('   -> %s' % img)
 	if download_img(imgs, title):
 		return 1
-	return 0
+	sys.exit(-1)
 
 class mangareader:
 	def __init__(self, url):
