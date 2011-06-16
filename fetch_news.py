@@ -2,16 +2,16 @@
 
 from mangareader import mangareader
 from mangareader import download_chapter
-import smtplib
 import sys, os
 from pysqlite2 import dbapi2 as sqlite3
 from ConfigParser import ConfigParser
 #from mangareader import stampa
 
-def send_mail(body, fromaddr, toaddr, subject):
+def send_mail(body, smtp, fromaddr, toaddr, subject):
+	import smtplib
 	body2 = "Subject: %s\n\n" %(subject,)
 	body2 += body
-	server = smtplib.SMTP('localhost')
+	server = smtplib.SMTP(smtp)
 	server.sendmail(fromaddr, toaddr, body2)
 	server.quit()
 
@@ -19,17 +19,19 @@ def send_mail(body, fromaddr, toaddr, subject):
 if __name__ == "__main__":
 	# import config
 	dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
-	configfile = 'mangareader.cfg'
+	configfile = 'config.cfg'
 	config = ConfigParser()
 	config.read(os.path.join(dirname, configfile))
 	fromaddr = config.get('mail','fromaddr')
 	toaddr = [config.get('mail','toaddr')]
 	subject = config.get('mail','subject')
+	smtp = config.get('mail','smtp')
 	p = config.get('mangalist','manga_list')
 	manga_list = p.replace('\n','').split(',')
+
 	# open database
 	dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
-	database = dirname+'/mangareader.db'
+	database = os.path.join(dirname,'database')
 	db = sqlite3.connect(database)
 	db.isolation_level = None
 	c = db.cursor()
@@ -72,4 +74,4 @@ if __name__ == "__main__":
 				body += '\nDa scaricare %s:\n' % (link[0])
 	if body:
 		#print body
-		send_mail(body,fromaddr, toaddr,subject)
+		send_mail(body, smtp, fromaddr, toaddr,subject)

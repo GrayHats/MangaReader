@@ -1,9 +1,10 @@
-release 0.3
+release 0.4 beta
 #######
 INSTALL
 #######
-apt-get install python-pysqlite2 python-beautifulsoup sqlite3
-sqlite3 mangareader.db < database.sql
+#on debian 6
+apt-get install python-pysqlite2 sqlite3
+sqlite3 database < database.sql
 
 ####
 EDIT
