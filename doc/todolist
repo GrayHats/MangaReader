@@ -1,11 +1,9 @@
 work in progress, obiettivi
 
 - dare na sistemata in generale
-	- ad esempio rinominare meglio i file..
 - commentare il codice
+	- restano da commentare le funzioni
 - scrivere docs
-
-- mettere controllo su len(pages) == len(imgs)
 
 - stampa stdout, stderr e log
   - i log andrebbero poi rotati, paaalle
