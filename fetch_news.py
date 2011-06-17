@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from mangareader import mangareader
+from mangareader import stampa
 from mangareader import download_chapter
 import sys, os
 from pysqlite2 import dbapi2 as sqlite3
@@ -57,7 +58,11 @@ if __name__ == "__main__":
 	c.execute('''select link from chapters where status = 0 ''')
 	links = c.fetchall()
 	if not len(links) == 0:
+		stampa('Da Scaricare:')
 		for link in links:
+			stampa(' %s' %link)
+		for link in links:
+			stampa('\nScarico %s' %link)
 			if download_chapter(link[0]) :
 				link_t = (link[0],)
 				c.execute('''update chapters set status = 1 where link like ?  ''', link_t)
