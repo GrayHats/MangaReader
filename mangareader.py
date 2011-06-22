@@ -5,12 +5,19 @@ import re
 import sys, os
 
 
+dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
+
 def stampa(string):
 	sys.stdout.write(string + '\n')
 
 def stampa_err(string):
 	sys.stderr.write(string + '\n')
-
+	from datetime import datetime
+	now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+	file = os.path.join(dirname,'log_error')
+	log = open(file, 'a')
+	log.write('%s: %s%s' %(now, string, '\n'))
+	log.close()
 
 class logfile:
 	def __init__(self, logfile):
@@ -21,7 +28,6 @@ class logfile:
 
 	def close(self):
 		self.logfile.close()
-
 
 def download_img(links, title):
 	import tarfile
@@ -42,12 +48,19 @@ def download_img(links, title):
 	os.chdir(dirmanga)
 	for link in links:
 		file_manga = link[link.rfind('/')+1:]
-		try:
-			urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
-			stampa('  -> scaricato: %s '% (str(link),))
-		except:
-			stampa_err('  -> ERRORE nello scaricare: %s '% (str(link),))
+		for i in range(1,10):
+			try:
+				urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
+				stampa('  -> scaricato: %s '% (str(link),))
+				break
+			except:
+				from time import sleep
+				stampa_err('  -> ERRORE nello scaricare: %s\nRiprovo'% (str(link),))
+				sleep(1)
+				continue
+			stampa_err('  -> ERRORE nello scaricare: %s\nEsco.'% (str(link),))
 			sys.exit(-1)
+
 	try:
 		tar = tarfile.open(title+'.cbz', 'w')
 		tar.add(title)
