@@ -5,7 +5,6 @@ scarica manga
 
 from mangareader import mangareader
 from mangareader import download_chapter
-from mangareader import download_img
 from mangareader import stampa
 
 import sys
@@ -13,19 +12,20 @@ import sys
 
 if __name__ == "__main__":
     if len(sys.argv) == 1 :
-        url = raw_input('Inserisci l\'url ... ')
+        URL = raw_input('Inserisci l\'url ... ')
     else:
-        url = sys.argv[1]
-    y = mangareader(url)
-    manga = y.fetch_title_manga()
-    name = y.convert_name(manga) # converte il nome del manga in formato utile per mangareader
-    lista = y.fetch_chapters_manga(name)
-    lista.sort() # basic sort..
+        URL = sys.argv[1]
+    Y = mangareader(URL)
+    MANGA = Y.fetch_title_manga()
+    # converte il nome del manga in formato utile per mangareader
+    NAME = Y.convert_name(MANGA) 
+    LISTA = Y.fetch_chapters_manga(NAME)
+    LISTA.sort() # basic sort..
     stampa('Elenco capitoli trovati:')
-    for chapter in lista:
+    for chapter in LISTA:
         stampa('-> %s' % chapter)
     stampa('\nInizio a scaricare i capitoli')
-    for chapter in lista:
+    for chapter in LISTA:
         stampa('Scarico capitolo: %s ' % chapter)
         download_chapter(chapter)
             
