@@ -12,22 +12,22 @@ import sys
 
 
 if __name__ == "__main__":
-	if len(sys.argv) == 1 :
-		url = raw_input('Inserisci l\'url ... ')
-	else:
-		url = sys.argv[1]
-	y = mangareader(url)
-	manga = y.fetch_title_manga()
-	name = y.convert_name(manga) # converte il nome del manga in formato utile per mangareader
-	lista = y.fetch_chapters_manga(name)
-	lista.sort() # basic sort..
-	stampa('Elenco capitoli trovati:')
-	for chapter in lista:
-		stampa('-> %s' % chapter)
-	stampa('\nInizio a scaricare i capitoli')
-	for chapter in lista:
-		stampa('Scarico capitolo: %s ' % chapter)
-		download_chapter(chapter)
-			
+    if len(sys.argv) == 1 :
+    	url = raw_input('Inserisci l\'url ... ')
+    else:
+    	url = sys.argv[1]
+    y = mangareader(url)
+    manga = y.fetch_title_manga()
+    name = y.convert_name(manga) # converte il nome del manga in formato utile per mangareader
+    lista = y.fetch_chapters_manga(name)
+    lista.sort() # basic sort..
+    stampa('Elenco capitoli trovati:')
+    for chapter in lista:
+    	stampa('-> %s' % chapter)
+    stampa('\nInizio a scaricare i capitoli')
+    for chapter in lista:
+    	stampa('Scarico capitolo: %s ' % chapter)
+    	download_chapter(chapter)
+    		
 
 
