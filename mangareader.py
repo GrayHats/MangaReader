@@ -116,7 +116,7 @@ class mangareader:
     def fetch_tag(self, regex):
     	'''
     	semplice ricerca per regex
-    	ritorna 0 oppure lista
+    	return lista
     	'''
     	rows = regex.findall(self.page)
     	#if len(rows) == 0:
