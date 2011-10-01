@@ -172,11 +172,11 @@ class mangareader:
 		rows2 = self.fetch_tag(regex2)
 		if len(rows1) != 0 :
 			for row in rows1:
-				if row not in links:
+				if self.build_name(row) not in links:
 					links.append(self.build_name(row))
 		if len(rows2) != 0 :
 			for row in rows2:
-				if row not in links:
+				if self.build_name(row) not in links:
 					links.append(self.build_name(row))
 		if len(links) == 0:
 			return 0
