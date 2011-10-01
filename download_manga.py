@@ -32,6 +32,3 @@ if __name__ == "__main__":
 	for chapter in lista:
 		stampa('Scarico capitolo: %s ' % chapter)
 		download_chapter(chapter)
-			
-
-

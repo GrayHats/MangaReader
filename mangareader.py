@@ -8,91 +8,91 @@ import sys, os
 dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 def stampa(string):
-	sys.stdout.write(string + '\n')
+    sys.stdout.write(string + '\n')
 
 def stampa_err(string):
-	sys.stderr.write(string + '\n')
-	from datetime import datetime
-	now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-	file = os.path.join(dirname,'log_error')
-	log = open(file, 'a')
-	log.write('%s: %s%s' %(now, string, '\n'))
-	log.close()
+    sys.stderr.write(string + '\n')
+    from datetime import datetime
+    now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    file = os.path.join(dirname,'log_error')
+    log = open(file, 'a')
+    log.write('%s: %s%s' %(now, string, '\n'))
+    log.close()
 
 class logfile:
-	def __init__(self, logfile):
-		self.logfile = open(logfile, 'a')
+    def __init__(self, logfile):
+    	self.logfile = open(logfile, 'a')
 
-	def logga(self, string):
-		self.logfile.write(string + '\n')
+    def logga(self, string):
+    	self.logfile.write(string + '\n')
 
-	def close(self):
-		self.logfile.close()
+    def close(self):
+    	self.logfile.close()
 
 def download_img(links, title):
-	import tarfile
-	import shutil
-	dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
-	dirmanga = os.path.join(dirname,'manga')
-	directory = os.path.join(dirmanga,title)
-	#retcode = subprocess.call([dirname+'/checkdir.sh', directory])
-	#if not os.path.isdir(dirmanga):
-	#	os.mkdir(dirmanga)
-	try:
-		os.makedirs(directory)
-	except:
-		from datetime import datetime
-		now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-		os.rename(directory, directory+now)
-		os.makedirs(directory)
-	os.chdir(dirmanga)
-	for link in links:
-		file_manga = link[link.rfind('/')+1:]
-		for i in range(1,10):
-			try:
-				urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
-				stampa('  -> scaricato: %s '% (str(link),))
-				break
-			except:
-				from time import sleep
-				stampa_err('  -> ERRORE nello scaricare: %s\nRiprovo'% (str(link),))
-				sleep(1)
-				continue
-			stampa_err('  -> ERRORE nello scaricare: %s\nEsco.'% (str(link),))
-			sys.exit(-1)
+    import tarfile
+    import shutil
+    dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
+    dirmanga = os.path.join(dirname,'manga')
+    directory = os.path.join(dirmanga,title)
+    #retcode = subprocess.call([dirname+'/checkdir.sh', directory])
+    #if not os.path.isdir(dirmanga):
+    #	os.mkdir(dirmanga)
+    try:
+    	os.makedirs(directory)
+    except:
+    	from datetime import datetime
+    	now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    	os.rename(directory, directory+now)
+    	os.makedirs(directory)
+    os.chdir(dirmanga)
+    for link in links:
+    	file_manga = link[link.rfind('/')+1:]
+    	for i in range(1,10):
+    		try:
+    			urllib.urlretrieve(str(link), os.path.join(directory, file_manga))	
+    			stampa('  -> scaricato: %s '% (str(link),))
+    			break
+    		except:
+    			from time import sleep
+    			stampa_err('  -> ERRORE nello scaricare: %s\nRiprovo'% (str(link),))
+    			sleep(1)
+    			continue
+    		stampa_err('  -> ERRORE nello scaricare: %s\nEsco.'% (str(link),))
+    		sys.exit(-1)
 
-	try:
-		tar = tarfile.open(title+'.cbz', 'w')
-		tar.add(title)
-		tar.close()
-		stampa('  Creato %s\n' %(title+'.cbz',))
-		shutil.rmtree(title)
-	except:
-		os.chdir(dirname)
-		sys.exit(-1)
-	os.chdir(dirname)
-	return 1
+    try:
+    	tar = tarfile.open(title+'.cbz', 'w')
+    	tar.add(title)
+    	tar.close()
+    	stampa('  Creato %s\n' %(title+'.cbz',))
+    	shutil.rmtree(title)
+    except:
+    	os.chdir(dirname)
+    	sys.exit(-1)
+    os.chdir(dirname)
+    return 1
 
 def download_chapter(url_chapter):
-	x = mangareader(url_chapter)
-	#manga = x.fetch_title_manga()
-	#name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
-	title = x.convert_name(x.fetch_title_chapter())
-	pages = x.fetch_pages_chapter()
-	imgs=[]
-	imgs.append(x.fetch_link_img())
-	for page in pages[1:]: # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
-		z = mangareader(page)
-		imgs.append(z.fetch_link_img())
-	stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
-	if len(pages) != len(imgs):
-		stampa_err('ERRORE: numero di pagine e immagini differente nel capitolo: %s' %(url_chapter,))
-		sys.exit(-1)
-	#for img in imgs:
-	#	stampa('   -> %s' % img)
-	if download_img(imgs, title):
-		return 1
-	sys.exit(-1)
+    x = mangareader(url_chapter)
+    #manga = x.fetch_title_manga()
+    #name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
+    title = x.convert_name(x.fetch_title_chapter())
+    pages = x.fetch_pages_chapter()
+    imgs=[]
+    imgs.append(x.fetch_link_img())
+    for page in pages[1:]: # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
+    	z = mangareader(page)
+    	imgs.append(z.fetch_link_img())
+    stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
+    if len(pages) != len(imgs):
+    	stampa_err('ERRORE: numero di pagine e immagini differente nel capitolo: %s' %(url_chapter,))
+    	sys.exit(-1)
+    #for img in imgs:
+    #	stampa('   -> %s' % img)
+    if download_img(imgs, title):
+    	return 1
+    sys.exit(-1)
 
 class mangareader:
 	def __init__(self, url):
@@ -193,4 +193,3 @@ class mangareader:
 		'''
 
 		return 'http://www.mangareader.net%s' % (str(link),)
-

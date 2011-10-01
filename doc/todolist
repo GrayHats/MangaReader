@@ -1,5 +1,6 @@
 work in progress, obiettivi
 
+- gestiore sistematica delle possibili eccezioni
 - dare na sistemata in generale
 - commentare il codice
 	- restano da commentare le funzioni
@@ -8,4 +9,6 @@ work in progress, obiettivi
 - stampa stdout, stderr e log
   - i log andrebbero poi rotati, paaalle
   	(lo faccio a livello di sistema e fanculo alla portabilita' dei log, ha haaaaaaa)
+
+- new branch: una gui!
 
