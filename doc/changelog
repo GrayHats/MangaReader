@@ -1,10 +1,6 @@
-# 0.5 beta
-- aggiunta gestione errore in fase di download immagine (da testare per benino)
+opzioni da linea di comando
+  in corso
 
+menu
+  in alto mare
 
-# 0.4
-- aggiunto qualche commento alla classe
-- eliminate tutte le librerie esterne a python ad eccezione di pysqlite
-  (che rimane obbligatoria solo per fetch_news.py)
-- aggiunti script (per linux) per rinominare velocemente il nome dei capitoli
-- codice teoricamente reso portabile per altri sistemi operativi (non testato :D)
