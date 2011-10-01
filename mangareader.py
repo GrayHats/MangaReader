@@ -125,7 +125,7 @@ class mangareader:
 
 
 	def convert_name(self, manga):
-		return manga.replace("'","").replace(' - ',' ').replace(' ','-').replace(':','').lower()
+		return manga.replace("'","").replace(' - ',' ').replace(' ','-').replace('!','').replace(':','').lower()
 
 	def fetch_title_manga(self):
 		'''
