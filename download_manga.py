@@ -20,6 +20,10 @@ if __name__ == "__main__":
 	manga = y.fetch_title_manga()
 	name = y.convert_name(manga) # converte il nome del manga in formato utile per mangareader
 	lista = y.fetch_chapters_manga(name)
+	if not lista:
+		print 'nessun capitolo trovato'
+		print lista
+		sys.exit(-1)
 	lista.sort() # basic sort..
 	stampa('Elenco capitoli trovati:')
 	for chapter in lista:
