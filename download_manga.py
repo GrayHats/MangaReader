@@ -36,6 +36,17 @@ def download_manga(url):
         stampa('Scarico capitolo: %s ' % chapter)
         download_chapter(chapter)
 
+def allowed_chapter(numbers):
+    try:
+        x,y = numbers.split('-')
+        x = int(x)
+        y = int(y)
+        if x > y or x < 0:
+            raise argparse.ArgumentTypeError('invalid chapters')
+        return [x, y]
+    except:
+        raise argparse.ArgumentTypeError('invalid chapters')
+
 
 
 if __name__ == "__main__":
@@ -45,17 +56,14 @@ if __name__ == "__main__":
 #        url = sys.argv[1]
 #    download_manga(url)
     parser = argparse.ArgumentParser(description='Download a manga from given\
-    url')
+            url')
     parser.add_argument('url', help='manga url', nargs='+')
-    parser.add_argument('-c', '--chapter', help='only chapters from X to\
-            Y', nargs=1, metavar='X-Y')
+    parser.add_argument('-c', '--chapters', help='only chapters from X to\
+            Y (integers)' , nargs=1, metavar='X-Y', type=allowed_chapter)
     parser.add_argument('--version', '-v', action='version', version='%(prog)s\
-    experimental')
+            experimental')
     args = parser.parse_args()
     stampa('argomenti %s' % args)
-    if args.chapter:
-        x,y = args.chapter[0].split('-')
-        print x,y
     stampa('---')
     stampa('Queue: ')
     for url in args.url:
