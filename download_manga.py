@@ -1,5 +1,5 @@
 #!/usr/bin/python
-''' 
+'''
 scarica manga
 
 versione experimental
@@ -8,11 +8,11 @@ sto sperimentando l'uso di argparse
 
 from mangareader import mangareader
 from mangareader import download_chapter
-from mangareader import download_img
+#from mangareader import download_img
 from mangareader import stampa
 import argparse
 
-from sys import exit 
+from sys import exit
 
 
 def download_manga(url):
@@ -37,24 +37,25 @@ def download_manga(url):
         download_chapter(chapter)
 
 def allowed_chapter(numbers):
+    '''
+        check chapter
+    '''
     try:
-        x,y = numbers.split('-')
-        x = int(x)
-        y = int(y)
-        if x > y or x < 0:
+        chapter_start, chapter_end = numbers.split('-')
+        chapter_start = int(chapter_start)
+        chapter_end = int(chapter_end)
+        if chapter_start > chapter_end or chapter_start < 0:
             raise argparse.ArgumentTypeError('invalid chapters')
-        return [x, y]
+        return [chapter_start, chapter_end]
     except:
         raise argparse.ArgumentTypeError('invalid chapters')
 
 
 
-if __name__ == "__main__":
-#    if len(sys.argv) == 1 :
-#        url = raw_input('Inserisci l\'url ... ')
-#    else:
-#        url = sys.argv[1]
-#    download_manga(url)
+def main():
+    '''
+    the main!
+    '''
     parser = argparse.ArgumentParser(description='Download a manga from given\
             url')
     parser.add_argument('url', help='manga url', nargs='+')
@@ -69,6 +70,18 @@ if __name__ == "__main__":
     for url in args.url:
         stampa(' -> %s' % url)
     stampa('---')
+    exit(1)
     for url in args.url:
         stampa('Download: %s' % url)
         download_manga(url)
+
+
+
+
+if __name__ == "__main__":
+#    if len(sys.argv) == 1 :
+#        url = raw_input('Inserisci l\'url ... ')
+#    else:
+#        url = sys.argv[1]
+#    download_manga(url)
+    main()
