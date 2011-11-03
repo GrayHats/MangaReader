@@ -1,8 +1,4 @@
-Some usefull scripts to download mangas from http://www.mangareader.net/
-
---------
-
-current release 0.4 
+current release 0.5
 #######
 INSTALL
 #######
@@ -32,3 +28,4 @@ cronjob
 ################
 work in progress
 ################
+add/del/list manga_list
