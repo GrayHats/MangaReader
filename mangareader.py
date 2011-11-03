@@ -1,25 +1,30 @@
 '''
 funzioni e classi
 '''
-#import urllib2
 import urllib
-#from BeautifulSoup import BeautifulSoup
 import re
 import sys, os
-from storm.locals import *
+#from storm.locals import *
+from storm.locals import Date, Unicode, DateTime, Int, \
+        create_database, Store, Storm
 
 database = create_database("sqlite:database")
 store = Store(database)
 
 dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-def stampa(string):
+def stampa(stringa):
     '''
     semplice funzione che stampa
+    stringa --> string
     '''
-    sys.stdout.write(string + '\n')
+    sys.stdout.write(stringa + '\n')
 
 def stampa_err(string):
+    '''
+    semplice funzione che stampa errori
+    stringa --> string
+    '''
     sys.stderr.write(string + '\n')
     from datetime import datetime
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -214,8 +219,10 @@ class mangareader:
 
 
 class Chapter(Storm):
+    '''
+    Oggetto gestito da Storm
+    '''
     __storm_table__ = "chapters"
-#    (id INTEGER PRIMARY KEY ASC, name TEXT, number INTEGER, link TEXT, status INTEGER, data TEXT, id_manga INTEGER);
     id = Int(primary=True)
     name = Unicode()
     number = Int()
@@ -224,5 +231,42 @@ class Chapter(Storm):
     link = Unicode()
     data = DateTime()
 
+    def __repr__(self):
+        return "<mail('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
+                % (self.id, self.name, self.number, \
+                self.link, self.status, self.data, self.id_manga)
 
+
+class Manga(Storm):
+    '''
+    Oggetto gestito da Storm
+    '''
+    __storm_table__ = "mangas"
+    id = Int(primary=True)
+    name = Unicode()
+    link = Unicode()
+    status = Int()
+    data = DateTime()
+
+    def __repr__(self):
+        return "<mail('%s', '%s', '%s', '%s', '%s')>" \
+                % (self.id, self.name, self.link, \
+                self.status, self.data)
+
+
+class Mail(Storm):
+    '''
+    Oggetto gestito da Storm
+    '''
+    __storm_table__ = "mails"
+    id = Int(primary=True)
+    from_addr = Unicode()
+    to_addr = Unicode()
+    subject = Unicode()
+    smtp = Unicode()
+
+    def __repr__(self):
+        return "<mail('%s', '%s', '%s', '%s', '%s')>" \
+                % (self.id, self.from_addr, self.to_addr, \
+                self.subject, self.smtp)
 
