@@ -1,10 +1,13 @@
 #!/usr/bin/env python
+'''
+fetch new chapters from http://www.mangareader.net/latest,
+download and report by mail
+'''
 
 from mangareader import mangareader
 from mangareader import stampa
 from mangareader import download_chapter
 from mangareader import store, Mail, Manga, Chapter
-#from mangareader import stampa
 from datetime import datetime
 
 
@@ -28,13 +31,12 @@ if __name__ == "__main__":
     # fetch new links from website
     x = mangareader('http://www.mangareader.net/latest')
     links=[]
-    for manga in store.find(Manga): # scorriamo la lista dei manga
-        name = x.convert_name(manga.name) # converte il nome del manga in formato utile per mangareader
+    for manga in store.find(Manga):
+        name = x.convert_name(manga.name)
         links = x.fetch_chapters_manga(name)
         if links :
             for link in links:
                 if not store.find(Chapter.link, Chapter.link == unicode(link)).count():
-                    print 'aggiungo %s' % link
                     new_chapter = store.add(Chapter())
                     new_chapter.link = unicode(link)
                     new_chapter.status = 0
@@ -50,14 +52,11 @@ if __name__ == "__main__":
             stampa(' %s' % row.link)
         for row in rows:
             stampa('\nScarico %s' % row.link)
-            #if download_chapter(row.link) :
-            if 1 == 1 :
+            if download_chapter(row.link) :
                 row.status = 1
                 row.data = now()
                 row.manga.data = now()
                 store.commit()
-        #        link_t = (link[0],)
-        #        c.execute('''update chapters set status = 1 where link like ?  ''', link_t)
                 body += '\nScaricato %s:\n' % (row.link)
             else:
                 body += '\nErrore nello scaricare %s:\n' % (row.link)
@@ -68,6 +67,5 @@ if __name__ == "__main__":
         body += '\n\n###Da scaricare'
         for row in rows:
             body += '\nDa scaricare %s:\n' % (row.link)
-    #if body:
-    #    send_mail(body, smtp, fromaddr, toaddr,subject)
-    print body
+    if body:
+        send_mail(body, smtp, fromaddr, toaddr,subject)
