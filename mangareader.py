@@ -6,7 +6,7 @@ import re
 import sys, os
 #from storm.locals import *
 from storm.locals import Date, Unicode, DateTime, Int, \
-        create_database, Store, Storm
+        create_database, Store, Storm, Reference
 
 database = create_database("sqlite:database")
 store = Store(database)
@@ -230,6 +230,7 @@ class Chapter(Storm):
     id_manga = Int()
     link = Unicode()
     data = DateTime()
+    manga = Reference(id_manga, "Manga.id")
 
     def __repr__(self):
         return "<mail('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
