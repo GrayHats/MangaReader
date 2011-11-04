@@ -1,9 +1,15 @@
 current release 0.5
+Some usefull scripts to download mangas from http://www.mangareader.net/
+
 #######
-INSTALL
+INSTALL - required only for fetch_news.py
 #######
 #on debian 6
 apt-get install python-pysqlite2 sqlite3
+echo 'deb http://ppa.launchpad.net/storm/ppa/ubuntu natty main' > /etc/apt/sources.list.d/storm.list
+apt-get install python-storm
+#
+#create db
 sqlite3 database < database.sql
 
 ####
@@ -22,7 +28,7 @@ fetch_news.py
 #######
 cronjob
 #######
-0 * * * * /mnt/munnizzaro/mangareader/fetch_news.py > /dev/null
+0 * * * * /path/to/mangareader/fetch_news.py > /dev/null
 
 
 ################
