@@ -68,4 +68,4 @@ if __name__ == "__main__":
         for row in rows:
             body += '\nDa scaricare %s:\n' % (row.link)
     if body:
-        send_mail(body, smtp, fromaddr, toaddr,subject)
+        send_mail(body)
