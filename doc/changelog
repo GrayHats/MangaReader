@@ -1,5 +1,8 @@
 # 0.5 beta
+- passaggio a STORM per la gestione del db
 - aggiunta gestione errore in fase di download immagine (da testare per benino)
+- gli errori durante il download delle code non dovrebbero inficiare il
+  proseguio del download
 
 
 # 0.4
