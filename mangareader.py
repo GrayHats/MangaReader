@@ -186,7 +186,7 @@ class mangareader:
 
         return 0, list
         '''
-        regex1 = re.compile('(?<=href=")/' + nomemanga + '.*?(?=")')
+        regex1 = re.compile('(?<=href=")/' + nomemanga + '/.*?(?=")')
         regex2 = re.compile(\
                 '(?<=href=")/\d*-\d*-\d*/' + nomemanga + \
                 '/chapter-\d*.html' + '(?=")')
