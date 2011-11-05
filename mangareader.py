@@ -8,10 +8,10 @@ import sys, os
 from storm.locals import Date, Unicode, DateTime, Int, \
         create_database, Store, Storm, Reference
 
-database = create_database("sqlite:database")
-store = Store(database)
-
 dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
+
+database = create_database("sqlite:" + os.path.join(dirname, "database"))
+store = Store(database)
 
 def stampa(stringa):
     '''

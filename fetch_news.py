@@ -30,7 +30,6 @@ if __name__ == "__main__":
 
     # fetch new links from website
     x = mangareader('http://www.mangareader.net/latest')
-    links=[]
     for manga in store.find(Manga):
         name = x.convert_name(manga.name)
         links = x.fetch_chapters_manga(name)
