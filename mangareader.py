@@ -233,7 +233,7 @@ class Chapter(Storm):
     manga = Reference(id_manga, "Manga.id")
 
     def __repr__(self):
-        return "<mail('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
+        return "<Chapter('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
                 % (self.id, self.name, self.number, \
                 self.link, self.status, self.data, self.id_manga)
 
@@ -250,7 +250,7 @@ class Manga(Storm):
     data = DateTime()
 
     def __repr__(self):
-        return "<mail('%s', '%s', '%s', '%s', '%s')>" \
+        return "<Manga('%s', '%s', '%s', '%s', '%s')>" \
                 % (self.id, self.name, self.link, \
                 self.status, self.data)
 
