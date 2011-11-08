@@ -78,7 +78,15 @@ def cerca():
     '''
         search record
     '''
-    print 'non implementato'
+    manga_id = int(raw_input('ID del manga: '))
+    manga = store.find(Manga, Manga.id == manga_id).one()
+    chapters = store.find(Chapter, Chapter.id_manga == manga_id)
+    print '%s - %s' % (manga.name, manga.data)
+    for chapter in chapters:
+        print ''
+        print '%s - %s' % (chapter.link, chapter.data)
+
+
 
 def manga_list():
     '''
@@ -124,6 +132,7 @@ def main():
     opzioni = {
             'a':(5, add_manganame,'aggiungi manga'),
             'm':(10, manga_list,'lista manga'),
+            'c':(10, cerca,'Dettaglio manga'),
             'z':(90, status_zero,'lista capitoli con status zero'),
             'rc':(95, delete_chapter,'elimina un capitolo'),
             'rm':(95, delete_manga,'elimina un manga'),
