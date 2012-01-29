@@ -95,8 +95,38 @@ def manga_list():
     mangas = store.find(Manga)
     for manga in mangas.order_by(Manga.name):
         chapters = store.find(Chapter, Chapter.id_manga == manga.id)
-        print '%s (%s)\t\t\t - scaricati: %s'\
+        print '%s (id:%s)\t\t\t - scaricati: %s'\
                  % (manga.name, manga.id, chapters.count())
+
+def manga_list_recentlydownloaded():
+    pass
+
+
+def manga_list_download_history():
+    from datetime import timedelta, date
+    today = date.today()
+    daydiffs = (30, 60, 120, 150, 180)
+    for daydiff in daydiffs:
+        days = timedelta(daydiff)
+        mangas = store.find(Manga)
+        print '\nManga scaricati da piu\' di %s giorni' % (daydiff, )
+        for manga in mangas.order_by(Manga.name):
+            if manga.data:
+                if manga.data.date() < (today - days):
+                    print '%s (id:%s)' % (manga.name, manga.id)
+
+
+
+
+def manga_list_missed_manga():
+    '''
+        manga con 0 capitoli scaricati
+    '''
+    mangas = store.find(Manga)
+    for manga in mangas.order_by(Manga.name):
+        chapters = store.find(Chapter, Chapter.id_manga == manga.id)
+        if chapters.count() == 0:
+            print '%s (id:%s)' % (manga.name, manga.id)
 
 def status_zero():
     '''
@@ -131,7 +161,11 @@ def main():
     '''
     opzioni = {
             'a':(5, add_manganame,'aggiungi manga'),
-            'm':(10, manga_list,'lista manga'),
+            'l':(10, manga_list,'lista manga'),
+            #'lr':(11, manga_list_recentlydownloaded,'lista manga scaricati recentemente'),
+            'lt':(12, manga_list_missed_manga,'lista manga mai scaricati'),
+            'lh':(12, manga_list_download_history,\
+                    'lista manga scaricati da molto tempo'),
             'c':(10, cerca,'Dettaglio manga'),
             'z':(90, status_zero,'lista capitoli con status zero'),
             'rc':(95, delete_chapter,'elimina un capitolo'),
