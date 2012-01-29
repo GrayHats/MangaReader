@@ -145,6 +145,7 @@ class mangareader:
                 .replace(' - ',' ')\
                 .replace(' ','-')\
                 .replace('!','')\
+                .replace('/','')\
                 .replace(':','')\
                 .lower()
 
