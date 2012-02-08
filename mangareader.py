@@ -42,6 +42,19 @@ class logfile:
 
     def close(self):
         self.logfile.close()
+        
+
+def fix_title(name):
+    regex = re.compile('(.*?)-(\d{1})$')
+    if regex.search(name) :
+        return '%s-00%s' % (regex.search(name).group(1),
+                                regex.search(name).group(2))
+    regex = re.compile('(.*?)-(\d{2})$')
+    if regex.search(name) :
+        return '%s-0%s' % (regex.search(name).group(1),
+                                regex.search(name).group(2))
+    return '%s' %name
+
 
 def download_img(links, title):
     import tarfile
@@ -106,7 +119,7 @@ def download_chapter(url_chapter):
         sys.exit(-1)
     #for img in imgs:
     #    stampa('   -> %s' % img)
-    if download_img(imgs, title):
+    if download_img(imgs, fix_title(title)):
         return 1
     sys.exit(-1)
 
