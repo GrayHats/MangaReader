@@ -41,7 +41,8 @@ if __name__ == "__main__":
                     new_chapter.status = 0
                     new_chapter.id_manga = manga.id
                     store.add(new_chapter)
-    store.commit()
+                    store.commit()
+                    store.flush()
 
     # download links with status 0
     rows = store.find(Chapter, Chapter.status == 0)
@@ -50,12 +51,23 @@ if __name__ == "__main__":
         for row in rows:
             stampa(' %s' % row.link)
         for row in rows:
+            ## re-check status, just in case..
+            this_chap = store.find(Chapter, Chapter.id == row.id)
+            if this_chap[0].status == 2:
+                stampa('Status cambiato per %s' % row.link)
+                continue
+            row.status = 2
+            row.data = now()
+            store.commit()
+            store.flush()
+            ##
             stampa('\nScarico %s' % row.link)
             if download_chapter(row.link) :
                 row.status = 1
                 row.data = now()
                 row.manga.data = now()
                 store.commit()
+                store.flush()
                 body += '\nScaricato %s:\n' % (row.link)
             else:
                 body += '\nErrore nello scaricare %s:\n' % (row.link)
@@ -66,5 +78,11 @@ if __name__ == "__main__":
         body += '\n\n###Da scaricare'
         for row in rows:
             body += '\nDa scaricare %s:\n' % (row.link)
+    # report links with status 2
+    rows = store.find(Chapter, Chapter.status == 2)
+    if rows.count():
+        body += '\n\n###Chapter in via di scaricamento'
+        for row in rows:
+            body += '\n  --> %s:\n' % (row.link)
     if body:
         send_mail(body)

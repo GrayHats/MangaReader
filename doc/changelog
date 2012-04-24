@@ -1,13 +1,17 @@
+# 0.6
+ - menu
+ - fix vari
+
 # 0.5 beta
-- passaggio a STORM per la gestione del db
-- aggiunta gestione errore in fase di download immagine (da testare per benino)
-- gli errori durante il download delle code non dovrebbero inficiare il
-  proseguio del download
+	- passaggio a STORM per la gestione del db
+	- aggiunta gestione errore in fase di download immagine (da testare per benino)
+	- gli errori durante il download delle code non dovrebbero inficiare il
+	  proseguio del download
 
 
 # 0.4
-- aggiunto qualche commento alla classe
-- eliminate tutte le librerie esterne a python ad eccezione di pysqlite
-  (che rimane obbligatoria solo per fetch_news.py)
-- aggiunti script (per linux) per rinominare velocemente il nome dei capitoli
-- codice teoricamente reso portabile per altri sistemi operativi (non testato :D)
+	- aggiunto qualche commento alla classe
+	- eliminate tutte le librerie esterne a python ad eccezione di pysqlite
+	  (che rimane obbligatoria solo per fetch_news.py)
+	- aggiunti script (per linux) per rinominare velocemente il nome dei capitoli
+	- codice teoricamente reso portabile per altri sistemi operativi (non testato :D)
