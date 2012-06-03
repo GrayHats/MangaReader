@@ -1,30 +1,42 @@
+WARNING - due to recent change on mangareader.net, theese scripts are no longer working.
+for now XD
+
 current release 0.6
 Some usefull scripts to download mangas from http://www.mangareader.net/
+
+
+#####
+USAGE
+#####
+download_manga.py  url-to-manga
+download_chapter.py url-to-chapter
+
 
 #######
 INSTALL - required only for fetch_news.py
 #######
+# since we are going to use a simple db (sqlite3), we need some modules to be installed
 #on debian 6 - as root
 apt-get install python-pysqlite2 sqlite3
 echo 'deb http://ppa.launchpad.net/storm/ppa/ubuntu natty main' > /etc/apt/sources.list.d/storm.list
 apt-get install python-storm
 #
-#create db
+#create db 
 sqlite3 database < database.sql
-
-#####
-USAGE
-#####
-download_manga.py  url
-download_chapter.py url
+#
+# run the mnu 
+./menu.py
+# and insert manga's names
+#
+# run ./fetch_news.py
+./fetch_news.py
+#
+# if u want to automate this task, go to cronjob section XD
 
 #######
 cronjob
 #######
-# run the mnu 
-./menu.py
-# and insert manga's names
-# then run 
+# run
 crontab -e
 # and insert this line
 0 * * * * /path/to/mangareader/fetch_news.py > /dev/null
