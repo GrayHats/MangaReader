@@ -11,41 +11,41 @@ def uscita():
     '''
         simply exit function
     '''
-    print 'Uscita..'
+    print 'quitting..'
     exit(1)
 
 def add_manganame():
     '''
         add manga from name
     '''
-    print "\n\nINSERIMENTO NUOVO MANGA\n"
+    print "\n\nADD NEW MANGA\n"
     manga = store.add(Manga())
-    manga.name = unicode(raw_input('Nome Manga: '))
-    conferma = raw_input("(q per annullare): ")
+    manga.name = unicode(raw_input('Manga Name: '))
+    conferma = raw_input("(q to abort): ")
     if conferma == "q":
         return
     store.commit()
-    print '%s inserito' % manga.name
+    print '%s added' % manga.name
     return
 
 def delete_chapter():
     '''
         remove event
     '''
-    record_id = int(raw_input('ID da rimuovere: '))
+    record_id = int(raw_input('ID to been removed: '))
     record = store.find(Chapter, Chapter.id == record_id)
     if not record.count():
-        print 'nessun evento da cancellare'
+        print 'nothing to remove'
         return
     for i in record.order_by(Chapter.id):
         print "%s - %s - status; %s" % (i.id, i.link,\
                 i.status)
 
-    conferma = raw_input("(q per annullare): ")
+    conferma = raw_input("(q to abort): ")
     if conferma == "q":
-        print 'operazione annullata'
+        print 'aborted'
         return
-    print 'evento cancellato'
+    print 'record removed'
     store.remove(record[0])
     store.commit()
     return
@@ -55,22 +55,22 @@ def delete_manga():
     '''
         remove event
     '''
-    record_id = int(raw_input('ID da rimuovere: '))
+    record_id = int(raw_input('ID to been removed: '))
     record = store.find(Manga, Manga.id == record_id)
     if not record.count():
-        print 'nessun evento da cancellare'
+        print 'nothing to remove'
         return
     for i in record.order_by(Manga.id):
         print "%s - %s - status; %s" % (i.id, i.name,\
                 i.status)
 
-    conferma = raw_input("(q per annullare): ")
+    conferma = raw_input("(q to abort): ")
     if conferma == "q":
-        print 'operazione annullata'
+        print 'aborted'
         return
     store.remove(record[0])
     store.commit()
-    print 'evento cancellato'
+    print 'record removed'
     return
 
 
@@ -78,7 +78,7 @@ def cerca():
     '''
         search record
     '''
-    manga_id = int(raw_input('ID del manga: '))
+    manga_id = int(raw_input('ID  manga: '))
     manga = store.find(Manga, Manga.id == manga_id).one()
     chapters = store.find(Chapter, Chapter.id_manga == manga_id)
     print '%s - %s' % (manga.name, manga.data)
@@ -131,7 +131,7 @@ def manga_list_missed_manga():
 def status_zero():
     '''
     '''
-    print "\n\nLista chapter da scaricare!\n"
+    print "\n\nList chapters still to download!\n"
     chapters = store.find(Chapter, Chapter.status == 0)
     for chapter in chapters.order_by(Chapter.id):
         print "%s - %s" % (chapter.id, chapter.link)
@@ -141,12 +141,12 @@ def menu(opzioni):
         a simply menu
     '''
     while 1:
-        print '\n\n Scelte Possobili:'
+        print '\n\n Menu:'
         for opzione in sorted(opzioni.items(), key=lambda (k, v): (v, k)):
             # opzione == ('key', (value, <function>, 'descr'))
             print '  %s - %s' % (opzione[0], opzione[1][2])
         try:
-            scelta = raw_input('\nChe fai? -> ').lower()
+            scelta = raw_input('\nso, what? -> ').lower()
         except EOFError:
             print "\n\n Oook, bye."
             break
@@ -160,17 +160,17 @@ def main():
      the main function ^_^
     '''
     opzioni = {
-            'a':(5, add_manganame,'aggiungi manga'),
-            'l':(10, manga_list,'lista manga'),
+            'a':(5, add_manganame,'add manga'),
+            'l':(10, manga_list,'list manga'),
             #'lr':(11, manga_list_recentlydownloaded,'lista manga scaricati recentemente'),
-            'lt':(12, manga_list_missed_manga,'lista manga mai scaricati'),
+            'lm':(12, manga_list_missed_manga,'list manga never downloaded'),
             'lh':(12, manga_list_download_history,\
-                    'lista manga scaricati da molto tempo'),
-            'c':(10, cerca,'Dettaglio manga'),
-            'z':(90, status_zero,'lista capitoli con status zero'),
-            'rc':(95, delete_chapter,'elimina un capitolo'),
-            'rm':(95, delete_manga,'elimina un manga'),
-            'q':(100, uscita, 'esci')
+                    'list history downloaded manga'),
+            'd':(10, cerca,'detail  manga'),
+            'z':(90, status_zero,'list chapter to download'),
+            'rc':(95, delete_chapter,'remove a chapter from db'),
+            'rm':(95, delete_manga,'remove a manga from db'),
+            'q':(100, uscita, 'quit')
             }
     #import pdb
     #pdb.set_trace()
