@@ -103,18 +103,13 @@ def manga_list_recentlydownloaded():
 
 
 def manga_list_download_history():
-    from datetime import timedelta, date
+    from datetime import timedelta, datetime, date
+    now = datetime.now()
     today = date.today()
-    daydiffs = (30, 60, 120, 150, 180)
-    for daydiff in daydiffs:
-        days = timedelta(daydiff)
-        mangas = store.find(Manga)
-        print '\nManga scaricati da piu\' di %s giorni' % (daydiff, )
-        for manga in mangas.order_by(Manga.name):
-            if manga.data:
-                if manga.data.date() < (today - days):
-                    print '%s (id:%s)' % (manga.name, manga.id)
-
+    mangas = store.find(Manga, Manga.data < now )
+    for manga in mangas.order_by(Manga.data):
+        print "%s %s -> %s" % (manga.name, manga.data.date(),
+                        (today - manga.data.date()).days )
 
 
 
