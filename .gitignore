@@ -1,0 +1,4 @@
+*.py[cod]
+.*.sw[a-z]
+*.un~
+Session.vim
