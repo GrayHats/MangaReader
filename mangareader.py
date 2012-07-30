@@ -112,6 +112,8 @@ class mangareader:
         self.rtitlechapter = re.compile('(?<=<title>).*?(?= - Read)')
         self.rimg = re.compile('(?<=src=")http://.*jpg(?=")')
         self.roption = re.compile('(?<=option value=").*?(?=")')
+        self.findnumber1 = re.compile(r'(?<=/chapter-)\d+(?=.html$)')
+        self.findnumber2 = re.compile(r'(?<=/)\d+$')
 
     def fetch_tag(self, regex):
         '''
@@ -145,6 +147,18 @@ class mangareader:
         '''
         return self.fetch_tag(self.rtitlechapter)[0]
     
+    def number(self, stringa):
+        match = self.findnumber1.search(stringa)
+        if match :
+            return match.group(0)
+        match = self.findnumber2.search(stringa)
+        if match :
+            return match.group(0)
+        print 'nessun numero capitolo trovato??'
+        return 0
+
+        
+
     def fetch_pages_chapter(self):
         '''
         ritorna i link delle pagine collegate al capitolo
@@ -173,11 +187,13 @@ class mangareader:
         if len(rows1) != 0 :
             for row in rows1:
                 if row not in links:
-                    links.append(self.build_name(row))
+                    row = self.build_name(row)
+                    links.append((row, self.number(row)))
         if len(rows2) != 0 :
             for row in rows2:
                 if row not in links:
-                    links.append(self.build_name(row))
+                    row = self.build_name(row)
+                    links.append((row, self.number(row)))
         if len(links) == 0:
             return 0
         return links

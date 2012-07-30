@@ -45,8 +45,8 @@ if __name__ == "__main__":
         name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
         rows = x.fetch_chapters_manga(name)
         if rows :
-            for row in rows:
-                links.append(row)
+            for chapter, number in rows:
+                links.append(chapter)
     # check links against db
     for link in links:
         link_t = (link,)
