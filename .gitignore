@@ -2,3 +2,5 @@
 .*.sw[a-z]
 *.un~
 Session.vim
+manga/
+log_error
