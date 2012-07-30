@@ -3,8 +3,7 @@
 scarica manga
 '''
 
-from mangareader import mangareader
-from mangareader import download_chapter
+from mangareader import download_chapter, mangareader
 from mangareader import stampa
 import argparse
 
@@ -42,7 +41,6 @@ def check_chapter_number(args, number):
 
 if __name__ == "__main__":
     args = options()
-    print args
     Y = mangareader(args.url)
     MANGA = Y.fetch_title_manga()
     # converte il nome del manga in formato utile per mangareader
