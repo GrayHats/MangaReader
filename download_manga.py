@@ -39,6 +39,7 @@ def check_chapter_number(args, number):
             return False
     return True
 
+
 if __name__ == "__main__":
     args = options()
     print args
@@ -57,6 +58,4 @@ if __name__ == "__main__":
         if check_chapter_number(args, int(number)):
             stampa('Scarico capitolo: %s ' % chapter)
             download_chapter(chapter)
-            
-
 

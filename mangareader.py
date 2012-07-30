@@ -1,21 +1,35 @@
-#import urllib2
+'''
+funzioni e classi
+'''
 import urllib
-#from BeautifulSoup import BeautifulSoup
 import re
 import sys, os
-
+#from storm.locals import *
+from storm.locals import Date, Unicode, DateTime, Int, \
+        create_database, Store, Storm, Reference
 
 dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-def stampa(string):
-    sys.stdout.write(string + '\n')
+database = create_database("sqlite:" + os.path.join(dirname, "database"))
+store = Store(database)
+
+def stampa(stringa):
+    '''
+    semplice funzione che stampa
+    stringa --> string
+    '''
+    sys.stdout.write(stringa + '\n')
 
 def stampa_err(string):
+    '''
+    semplice funzione che stampa errori
+    stringa --> string
+    '''
     sys.stderr.write(string + '\n')
     from datetime import datetime
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    file = os.path.join(dirname,'log_error')
-    log = open(file, 'a')
+    file_err = os.path.join(dirname,'log_error')
+    log = open(file_err, 'a')
     log.write('%s: %s%s' %(now, string, '\n'))
     log.close()
 
@@ -28,6 +42,17 @@ class logfile:
 
     def close(self):
         self.logfile.close()
+
+def fix_title(name):
+    regex = re.compile('(.*?)-(\d{1})$')
+    if regex.search(name) :
+        return '%s-00%s' % (regex.search(name).group(1),
+                                regex.search(name).group(2))
+    regex = re.compile('(.*?)-(\d{2})$')
+    if regex.search(name) :
+        return '%s-0%s' % (regex.search(name).group(1),
+                                regex.search(name).group(2))
+    return '%s' %name
 
 def download_img(links, title):
     import tarfile
@@ -50,16 +75,17 @@ def download_img(links, title):
         file_manga = link[link.rfind('/')+1:]
         for i in range(1,10):
             try:
-                urllib.urlretrieve(str(link), os.path.join(directory, file_manga))    
+                urllib.urlretrieve(str(link), os.path.join(directory, file_manga))
                 stampa('  -> scaricato: %s '% (str(link),))
                 break
             except:
                 from time import sleep
-                stampa_err('  -> ERRORE nello scaricare: %s\nRiprovo'% (str(link),))
+                stampa_err('  -> ERRORE nello scaricare: %s\
+                        \nRiprovo'% (str(link),))
                 sleep(1)
                 continue
-            stampa_err('  -> ERRORE nello scaricare: %s\nEsco.'% (str(link),))
-            sys.exit(-1)
+            exit('  -> ERRORE nello scaricare: %s\
+                    \nEsco.'% (str(link),))
 
     try:
         tar = tarfile.open(title+'.cbz', 'w')
@@ -75,28 +101,28 @@ def download_img(links, title):
 
 def download_chapter(url_chapter):
     x = mangareader(url_chapter)
-    #manga = x.fetch_title_manga()
-    #name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
     title = x.convert_name(x.fetch_title_chapter())
     pages = x.fetch_pages_chapter()
     imgs=[]
     imgs.append(x.fetch_link_img())
-    for page in pages[1:]: # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
+    for page in pages[1:]:
+        # evitiamo di riscaricare la prima pagina, visto che gia' l'abbiamo
         z = mangareader(page)
         imgs.append(z.fetch_link_img())
     stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
     if len(pages) != len(imgs):
-        stampa_err('ERRORE: numero di pagine e immagini differente nel capitolo: %s' %(url_chapter,))
+        exit('ERRORE: numero di pagine e immagini differente \
+                nel capitolo: %s' %(url_chapter,))
         sys.exit(-1)
     #for img in imgs:
     #    stampa('   -> %s' % img)
-    if download_img(imgs, title):
+    if download_img(imgs, fix_title(title)):
         return 1
     sys.exit(-1)
 
 class mangareader:
     def __init__(self, url):
-        ''' 
+        '''
         scarica la pagina e compila le regex
         url - stringa che contiene l'indirizzo
         '''
@@ -105,8 +131,7 @@ class mangareader:
             self.page=usock.read()
             usock.close()
         except:
-            print "pagina non scaricata: %s" %(url, ) 
-            sys.exit(1)
+            exit("pagina non scaricata: %s" %(url, ))
         # compiled regex
         self.rtitlemanga = re.compile('(?<=<title>).*?(?= Manga)')
         self.rtitlechapter = re.compile('(?<=<title>).*?(?= - Read)')
@@ -123,11 +148,17 @@ class mangareader:
         rows = regex.findall(self.page)
         #if len(rows) == 0:
             #return 0
-        return rows 
+        return rows
 
 
     def convert_name(self, manga):
-        return manga.replace("'","").replace(' - ',' ').replace(' ','-').lower()
+        return manga.replace("'","")\
+                .replace(' - ',' ')\
+                .replace(' ','-')\
+                .replace('!','')\
+                .replace('/','')\
+                .replace(':','')\
+                .lower()
 
     def fetch_title_manga(self):
         '''
@@ -140,7 +171,7 @@ class mangareader:
     def fetch_title_chapter(self):
         '''
         Ritorna il titolo del capitolo
-        solitamente e' nella forma 
+        solitamente e' nella forma
         NomeManga NumeroCapitolo
 
         return string
@@ -165,7 +196,7 @@ class mangareader:
 
         return list
         '''
-        links=[]
+        links = []
         for row in self.fetch_tag(self.roption):
             links.append(self.build_name(row))
         return links
@@ -179,21 +210,21 @@ class mangareader:
 
         return 0, list
         '''
-        regex1 = re.compile('(?<=href=")/' + nomemanga + '.*?(?=")')
-        regex2 = re.compile('(?<=href=")/\d*-\d*-\d*/' + nomemanga + '/chapter-\d*.html' + '(?=")')
+        regex1 = re.compile('(?<=href=")/' + nomemanga + '/.*?(?=")')
+        regex2 = re.compile(\
+                '(?<=href=")/\d*-\d*-\d*/' + nomemanga + \
+                '/chapter-\d*.html' + '(?=")')
         links=[]
         rows1 = self.fetch_tag(regex1)
         rows2 = self.fetch_tag(regex2)
         if len(rows1) != 0 :
             for row in rows1:
-                if row not in links:
-                    row = self.build_name(row)
-                    links.append((row, self.number(row)))
+                if self.build_name(row) not in links:
+                    links.append(self.build_name(row))
         if len(rows2) != 0 :
             for row in rows2:
-                if row not in links:
-                    row = self.build_name(row)
-                    links.append((row, self.number(row)))
+                if self.build_name(row) not in links:
+                    links.append(self.build_name(row))
         if len(links) == 0:
             return 0
         return links
@@ -209,4 +240,58 @@ class mangareader:
         '''
 
         return 'http://www.mangareader.net%s' % (str(link),)
+
+
+class Chapter(Storm):
+    '''
+    Oggetto gestito da Storm
+    '''
+    __storm_table__ = "chapters"
+    id = Int(primary=True)
+    name = Unicode()
+    number = Int()
+    status = Int()
+    id_manga = Int()
+    link = Unicode()
+    data = DateTime()
+    manga = Reference(id_manga, "Manga.id")
+
+    def __repr__(self):
+        return "<Chapter('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
+                % (self.id, self.name, self.number, \
+                self.link, self.status, self.data, self.id_manga)
+
+
+class Manga(Storm):
+    '''
+    Oggetto gestito da Storm
+    '''
+    __storm_table__ = "mangas"
+    id = Int(primary=True)
+    name = Unicode()
+    link = Unicode()
+    status = Int()
+    data = DateTime()
+
+    def __repr__(self):
+        return "<Manga('%s', '%s', '%s', '%s', '%s')>" \
+                % (self.id, self.name, self.link, \
+                self.status, self.data)
+
+
+class Mail(Storm):
+    '''
+    Oggetto gestito da Storm
+    '''
+    __storm_table__ = "mails"
+    id = Int(primary=True)
+    from_addr = Unicode()
+    to_addr = Unicode()
+    subject = Unicode()
+    smtp = Unicode()
+
+    def __repr__(self):
+        return "<mail('%s', '%s', '%s', '%s', '%s')>" \
+                % (self.id, self.from_addr, self.to_addr, \
+                self.subject, self.smtp)
 

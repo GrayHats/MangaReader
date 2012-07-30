@@ -1,82 +1,88 @@
 #!/usr/bin/env python
+'''
+fetch new chapters from http://www.mangareader.net/latest,
+download and report by mail
+'''
 
 from mangareader import mangareader
 from mangareader import stampa
 from mangareader import download_chapter
-import sys, os
-from pysqlite2 import dbapi2 as sqlite3
-from ConfigParser import ConfigParser
-#from mangareader import stampa
+from mangareader import store, Mail, Manga, Chapter
+from datetime import datetime
 
-def send_mail(body, smtp, fromaddr, toaddr, subject):
+
+def now():
+    return datetime.now()
+
+def send_mail(body):
     import smtplib
-    body2 = "Subject: %s\n\n" %(subject,)
-    body2 += body
-    server = smtplib.SMTP(smtp)
-    server.sendmail(fromaddr, toaddr, body2)
-    server.quit()
+    rows = store.find(Mail)
+    for row in rows:
+        body2 = "Subject: %s\n\n" %(row.subject,)
+        body2 += body
+        server = smtplib.SMTP(row.smtp)
+        server.sendmail(row.from_addr, [row.to_addr], body2)
+        server.quit()
 
 
 if __name__ == "__main__":
-    # import config
-    dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
-    configfile = 'config.cfg'
-    config = ConfigParser()
-    config.read(os.path.join(dirname, configfile))
-    fromaddr = config.get('mail','fromaddr')
-    toaddr = [config.get('mail','toaddr')]
-    subject = config.get('mail','subject')
-    smtp = config.get('mail','smtp')
-    p = config.get('mangalist','manga_list')
-    manga_list = p.replace('\n','').split(',')
-
-    # open database
-    dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
-    database = os.path.join(dirname,'database')
-    db = sqlite3.connect(database)
-    db.isolation_level = None
-    c = db.cursor()
-    body= ''                
+    body= ''
 
     # fetch new links from website
     x = mangareader('http://www.mangareader.net/latest')
-    links=[]
-    for manga in manga_list: # scorriamo la lista dei manga
-        name = x.convert_name(manga) # converte il nome del manga in formato utile per mangareader
-        rows = x.fetch_chapters_manga(name)
-        if rows :
-            for chapter, number in rows:
-                links.append(chapter)
-    # check links against db
-    for link in links:
-        link_t = (link,)
-        c.execute('''SELECT COUNT(id) FROM chapters WHERE link LIKE ?  ''', link_t)
-        if not c.fetchone()[0]:
-            c.execute('''insert into chapters (link, status) values (?,0) ''',link_t)
+    for manga in store.find(Manga):
+        name = x.convert_name(manga.name)
+        links = x.fetch_chapters_manga(name)
+        if links :
+            for link in links:
+                if not store.find(Chapter.link, Chapter.link == unicode(link)).count():
+                    new_chapter = store.add(Chapter())
+                    new_chapter.link = unicode(link)
+                    new_chapter.status = 0
+                    new_chapter.id_manga = manga.id
+                    store.add(new_chapter)
+                    store.commit()
+                    store.flush()
 
     # download links with status 0
-    c.execute('''select link from chapters where status = 0 ''')
-    links = c.fetchall()
-    if not len(links) == 0:
+    rows = store.find(Chapter, Chapter.status == 0)
+    if rows.count():
         stampa('Da Scaricare:')
-        for link in links:
-            stampa(' %s' %link)
-        for link in links:
-            stampa('\nScarico %s' %link)
-            if download_chapter(link[0]) :
-                link_t = (link[0],)
-                c.execute('''update chapters set status = 1 where link like ?  ''', link_t)
-                body += '\nScaricato %s:\n' % (link[0])
+        for row in rows:
+            stampa(' %s' % row.link)
+        for row in rows:
+            ## re-check status, just in case..
+            this_chap = store.find(Chapter, Chapter.id == row.id)
+            if this_chap[0].status == 2:
+                stampa('Status cambiato per %s' % row.link)
+                continue
+            row.status = 2
+            row.data = now()
+            store.commit()
+            store.flush()
+            ##
+            stampa('\nScarico %s' % row.link)
+            if download_chapter(row.link) :
+                row.status = 1
+                row.data = now()
+                row.manga.data = now()
+                store.commit()
+                store.flush()
+                body += '\nScaricato %s:\n' % (row.link)
             else:
-                body += '\nErrore nello scaricare %s:\n' % (link)
+                body += '\nErrore nello scaricare %s:\n' % (row.link)
 
     # report links with status 0
-    c.execute('''select link from chapters where status = 0 ''')
-    links = c.fetchall()
-    if not len(links) == 0:
+    rows = store.find(Chapter, Chapter.status == 0)
+    if rows.count():
         body += '\n\n###Da scaricare'
-        for link in links:
-                body += '\nDa scaricare %s:\n' % (link[0])
+        for row in rows:
+            body += '\nDa scaricare %s:\n' % (row.link)
+    # report links with status 2
+    rows = store.find(Chapter, Chapter.status == 2)
+    if rows.count():
+        body += '\n\n###Chapter in via di scaricamento'
+        for row in rows:
+            body += '\n  --> %s:\n' % (row.link)
     if body:
-        #print body
-        send_mail(body, smtp, fromaddr, toaddr,subject)
+        send_mail(body)
