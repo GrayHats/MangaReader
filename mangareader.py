@@ -4,14 +4,9 @@ funzioni e classi
 import urllib
 import re
 import sys, os
-#from storm.locals import *
-from storm.locals import Date, Unicode, DateTime, Int, \
-        create_database, Store, Storm, Reference
 
 dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-database = create_database("sqlite:" + os.path.join(dirname, "database"))
-store = Store(database)
 
 def stampa(stringa):
     '''
@@ -42,7 +37,6 @@ class logfile:
 
     def close(self):
         self.logfile.close()
-        
 
 def fix_title(name):
     regex = re.compile('(.*?)-(\d{1})$')
@@ -54,7 +48,6 @@ def fix_title(name):
         return '%s-0%s' % (regex.search(name).group(1),
                                 regex.search(name).group(2))
     return '%s' %name
-
 
 def download_img(links, title):
     import tarfile
@@ -86,9 +79,8 @@ def download_img(links, title):
                         \nRiprovo'% (str(link),))
                 sleep(1)
                 continue
-            stampa_err('  -> ERRORE nello scaricare: %s\
+            exit('  -> ERRORE nello scaricare: %s\
                     \nEsco.'% (str(link),))
-            sys.exit(-1)
 
     try:
         tar = tarfile.open(title+'.cbz', 'w')
@@ -114,7 +106,7 @@ def download_chapter(url_chapter):
         imgs.append(z.fetch_link_img())
     stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
     if len(pages) != len(imgs):
-        stampa_err('ERRORE: numero di pagine e immagini differente \
+        exit('ERRORE: numero di pagine e immagini differente \
                 nel capitolo: %s' %(url_chapter,))
         sys.exit(-1)
     #for img in imgs:
@@ -134,13 +126,14 @@ class mangareader:
             self.page=usock.read()
             usock.close()
         except:
-            print "pagina non scaricata: %s" %(url, )
-            sys.exit(1)
+            exit("pagina non scaricata: %s" %(url, ))
         # compiled regex
         self.rtitlemanga = re.compile('(?<=<title>).*?(?= Manga)')
         self.rtitlechapter = re.compile('(?<=<title>).*?(?= - Read)')
         self.rimg = re.compile('(?<=src=")http://.*jpg(?=")')
         self.roption = re.compile('(?<=option value=").*?(?=")')
+        self.findnumber1 = re.compile(r'(?<=/chapter-)\d+(?=.html$)')
+        self.findnumber2 = re.compile(r'(?<=/)\d+$')
 
     def fetch_tag(self, regex):
         '''
@@ -179,6 +172,18 @@ class mangareader:
         return string
         '''
         return self.fetch_tag(self.rtitlechapter)[0]
+    
+    def number(self, stringa):
+        match = self.findnumber1.search(stringa)
+        if match :
+            return match.group(0)
+        match = self.findnumber2.search(stringa)
+        if match :
+            return match.group(0)
+        print 'nessun numero capitolo trovato??'
+        return 0
+
+        
 
     def fetch_pages_chapter(self):
         '''
@@ -209,12 +214,14 @@ class mangareader:
         rows2 = self.fetch_tag(regex2)
         if len(rows1) != 0 :
             for row in rows1:
-                if self.build_name(row) not in links:
-                    links.append(self.build_name(row))
+                chapter = self.build_name(row)
+                if chapter not in links:
+                    links.append((chapter, self.number(chapter)))
         if len(rows2) != 0 :
             for row in rows2:
-                if self.build_name(row) not in links:
-                    links.append(self.build_name(row))
+                chapter = self.build_name(row)
+                if chapter not in links:
+                    links.append((chapter, self.number(chapter)))
         if len(links) == 0:
             return 0
         return links
@@ -231,57 +238,4 @@ class mangareader:
 
         return 'http://www.mangareader.net%s' % (str(link),)
 
-
-class Chapter(Storm):
-    '''
-    Oggetto gestito da Storm
-    '''
-    __storm_table__ = "chapters"
-    id = Int(primary=True)
-    name = Unicode()
-    number = Int()
-    status = Int()
-    id_manga = Int()
-    link = Unicode()
-    data = DateTime()
-    manga = Reference(id_manga, "Manga.id")
-
-    def __repr__(self):
-        return "<Chapter('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" \
-                % (self.id, self.name, self.number, \
-                self.link, self.status, self.data, self.id_manga)
-
-
-class Manga(Storm):
-    '''
-    Oggetto gestito da Storm
-    '''
-    __storm_table__ = "mangas"
-    id = Int(primary=True)
-    name = Unicode()
-    link = Unicode()
-    status = Int()
-    data = DateTime()
-
-    def __repr__(self):
-        return "<Manga('%s', '%s', '%s', '%s', '%s')>" \
-                % (self.id, self.name, self.link, \
-                self.status, self.data)
-
-
-class Mail(Storm):
-    '''
-    Oggetto gestito da Storm
-    '''
-    __storm_table__ = "mails"
-    id = Int(primary=True)
-    from_addr = Unicode()
-    to_addr = Unicode()
-    subject = Unicode()
-    smtp = Unicode()
-
-    def __repr__(self):
-        return "<mail('%s', '%s', '%s', '%s', '%s')>" \
-                % (self.id, self.from_addr, self.to_addr, \
-                self.subject, self.smtp)
 

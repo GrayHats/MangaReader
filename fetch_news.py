@@ -3,11 +3,10 @@
 fetch new chapters from http://www.mangareader.net/latest,
 download and report by mail
 '''
-
 from mangareader import mangareader
 from mangareader import stampa
 from mangareader import download_chapter
-from mangareader import store, Mail, Manga, Chapter
+from mangadb import store, Manga, Chapter, Mail
 from datetime import datetime
 
 
