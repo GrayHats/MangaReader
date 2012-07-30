@@ -5,8 +5,9 @@ from storm.locals import Date, Unicode, DateTime, Int, \
         create_database, Store, Storm, Reference
 
 from mangareader import dirname
+from os import path
 
-database = create_database("sqlite:" + os.path.join(dirname, "database"))
+database = create_database("sqlite:" + path.join(dirname, "database"))
 store = Store(database)
 
 

@@ -4,7 +4,7 @@ agenda
 work in progress
 '''
 
-from mangareader import store, Chapter, Manga
+from mangadb import store, Chapter, Manga
 
 
 def uscita():
