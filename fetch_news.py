@@ -33,7 +33,7 @@ if __name__ == "__main__":
         name = x.convert_name(manga.name)
         links = x.fetch_chapters_manga(name)
         if links :
-            for link in links:
+            for link, number in links:
                 if not store.find(Chapter.link, Chapter.link == unicode(link)).count():
                     new_chapter = store.add(Chapter())
                     new_chapter.link = unicode(link)
