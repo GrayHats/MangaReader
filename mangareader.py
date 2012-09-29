@@ -106,14 +106,14 @@ def download_chapter(url_chapter):
         imgs.append(z.fetch_link_img())
     stampa(' -> Trovate %s pagine e %s immagini' % (len(pages),len(imgs)))
     if len(pages) != len(imgs):
-        exit('ERRORE: numero di pagine e immagini differente \
+        stampa_err('ERRORE: numero di pagine e immagini differente \
                 nel capitolo: %s' %(url_chapter,))
-        sys.exit(-1)
+        return 0
     #for img in imgs:
     #    stampa('   -> %s' % img)
     if download_img(imgs, fix_title(title)):
         return 1
-    sys.exit(-1)
+    #sys.exit(-1)
 
 class mangareader:
     def __init__(self, url):
@@ -121,12 +121,21 @@ class mangareader:
         scarica la pagina e compila le regex
         url - stringa che contiene l'indirizzo
         '''
-        try:
-            usock = urllib.urlopen(url)
-            self.page=usock.read()
-            usock.close()
-        except:
-            exit("pagina non scaricata: %s" %(url, ))
+
+        for i in range(1,10):
+            try:
+                usock = urllib.urlopen(url)
+                self.page=usock.read()
+                usock.close()
+                break
+            except:
+                from time import sleep
+                stampa_err('  -> ERRORE nello scaricare: %s\
+                        \nRiprovo'% (str(url),))
+                sleep(1)
+                continue
+            exit('  -> ERRORE nello scaricare: %s\
+                    \nEsco.'% (str(url),))
         # compiled regex
         self.rtitlemanga = re.compile('(?<=<title>).*?(?= Manga)')
         self.rtitlechapter = re.compile('(?<=<title>).*?(?= - Read)')
