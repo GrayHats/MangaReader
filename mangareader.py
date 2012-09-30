@@ -162,6 +162,8 @@ class mangareader:
                 .replace('!','')\
                 .replace('/','')\
                 .replace(':','')\
+                .replace('%','')\
+                .replace(';','')\
                 .lower()
 
     def fetch_title_manga(self):
