@@ -195,6 +195,20 @@ class mangareader:
         return 0
 
         
+    def find_manga(self, name):
+        '''
+         cerca in una pagina per vedere se trova il nome del manga cercato
+        '''
+        regex1 = r'(?<=<a href=")/%s(?=")' % name
+        regex2 = r'(?<=<a href=")/\d+/%s.html(?=")' % name
+        match = re.search(regex1, self.page)
+        if match :
+            return self.build_name(match.group(0))
+        match = re.search(regex2, self.page)
+        if match :
+            return self.build_name(match.group(0))
+        print 'nessun numero capitolo trovato??'
+        return 0
 
     def fetch_pages_chapter(self):
         '''
