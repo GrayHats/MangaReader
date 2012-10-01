@@ -207,7 +207,7 @@ class mangareader:
         match = re.search(regex2, self.page)
         if match :
             return self.build_name(match.group(0))
-        print 'nessun numero capitolo trovato??'
+        print '--> %s non trovato??' % name
         return 0
 
     def fetch_pages_chapter(self):
