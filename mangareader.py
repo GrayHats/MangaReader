@@ -240,12 +240,14 @@ class mangareader:
         if len(rows1) != 0 :
             for row in rows1:
                 chapter = self.build_name(row)
-                if chapter not in links:
-                    links.append((chapter, self.number(chapter)))
+                number =  self.number(chapter)
+                if (chapter, number) not in links:
+                    links.append((chapter, number))
         if len(rows2) != 0 :
             for row in rows2:
                 chapter = self.build_name(row)
-                if chapter not in links:
+                number =  self.number(chapter)
+                if (chapter, number) not in links:
                     links.append((chapter, self.number(chapter)))
         if len(links) == 0:
             return 0
