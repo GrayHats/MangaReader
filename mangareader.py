@@ -49,22 +49,26 @@ def fix_title(name):
                                 regex.search(name).group(2))
     return '%s' %name
 
+
+def createdir(dir_manga):
+    """
+    crea una directory,
+    se esiste gia', rinomina e crea
+    manca un controllo degli errori di i/o
+    """
+    if os.path.exists(dir_manga):
+        from datetime import datetime
+        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        os.rename(directory, directory+now)
+    os.mkdir(dir_manga)
+
 def download_img(links, title):
     import tarfile
     import shutil
     dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
     dirmanga = os.path.join(dirname,'manga')
     directory = os.path.join(dirmanga,title)
-    #retcode = subprocess.call([dirname+'/checkdir.sh', directory])
-    #if not os.path.isdir(dirmanga):
-    #    os.mkdir(dirmanga)
-    try:
-        os.makedirs(directory)
-    except:
-        from datetime import datetime
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        os.rename(directory, directory+now)
-        os.makedirs(directory)
+    createdir(directory)
     os.chdir(dirmanga)
     for link in links:
         file_manga = link[link.rfind('/')+1:]

@@ -69,6 +69,14 @@ TO-DO-LIST
 CHANGELOG
 #########
 
+# 0.7 da fare / in corso
+ - syntax beautify del codice
+ 	- createdir
+	- riduzione delle librerie da importare
+ - logging serio
+
+
+
 # 0.6
  - menu
  - various minor fix
