@@ -4,3 +4,5 @@
 Session.vim
 manga/
 log_error
+database
+tmp/*
