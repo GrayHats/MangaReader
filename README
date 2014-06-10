@@ -58,8 +58,10 @@ TO-DO-LIST
 - translate comments..
 
 - to write a doc ^_^
+	epydoc
 
 - to handle stdout, stderr and log
+	logging
 
 - new branch: a gui!
 
@@ -68,6 +70,8 @@ TO-DO-LIST
 #########
 CHANGELOG
 #########
+
+# 0.6.1  expanded convert_name function to handle more "manganames"
 
 # 0.6
  - menu
