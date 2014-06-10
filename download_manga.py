@@ -1,5 +1,5 @@
 #!/usr/bin/python
-''' 
+'''
 scarica manga
 '''
 
@@ -9,16 +9,17 @@ import argparse
 
 
 def options():
-    parser = argparse.ArgumentParser(description = '''
+    parser = argparse.ArgumentParser(description='''
     Scarica un manga da mangareader.net
     '''
-    )
-    parser.add_argument("url", help = 'url della pagina principale del manga')
-    parser.add_argument("-f", '--from_chapter', help = 'inizia dal capitolo X',
-            default = 0, type = int)
-    parser.add_argument("-t", '--to_chapter', help = 'finisce al capitolo  Y',
-            default = 0, type = int)
+                                     )
+    parser.add_argument("url", help='url della pagina principale del manga')
+    parser.add_argument("-f", '--from_chapter', help='inizia dal capitolo X',
+                        default=0, type=int)
+    parser.add_argument("-t", '--to_chapter', help='finisce al capitolo  Y',
+                        default=0, type=int)
     return parser.parse_args()
+
 
 def check_chapter_number(args, number):
     if (args.from_chapter and args.to_chapter):
@@ -39,14 +40,13 @@ def check_chapter_number(args, number):
     return True
 
 
-if __name__ == "__main__":
+def main():
     args = options()
     Y = mangareader(args.url)
     MANGA = Y.fetch_title_manga()
     # converte il nome del manga in formato utile per mangareader
-    NAME = Y.convert_name(MANGA) 
-    LISTA = Y.fetch_chapters_manga(NAME)
-    LISTA.sort() # basic sort..
+    NAME = Y.convert_name(MANGA)
+    LISTA = sorted(Y.fetch_chapters_manga(NAME))
     stampa('Elenco capitoli trovati:')
     for chapter, number in LISTA:
         if check_chapter_number(args, int(number)):
@@ -57,3 +57,6 @@ if __name__ == "__main__":
             stampa('Scarico capitolo: %s ' % chapter)
             download_chapter(chapter)
 
+
+if __name__ == "__main__":
+    main()

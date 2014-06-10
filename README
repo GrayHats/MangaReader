@@ -73,6 +73,7 @@ CHANGELOG
 
 # 0.7 still in progress
  - syntax beautify del codice
+   - pep8
 
 # 0.6.1  expanded convert_name function to handle more "manganames"
 
