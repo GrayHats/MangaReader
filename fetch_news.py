@@ -17,7 +17,9 @@ def send_mail(body):
     import smtplib
     rows = store.find(Mail)
     for row in rows:
-        body2 = "Subject: %s\n\n" %(row.subject,)
+        body2 = "From: %s\n" %(row.from_addr)
+        body2 += "To: %s\n" % (row.to_addr)
+        body2 += "Subject: %s\n\n" %(row.subject,)
         body2 += body
         server = smtplib.SMTP(row.smtp)
         server.sendmail(row.from_addr, [row.to_addr], body2)
