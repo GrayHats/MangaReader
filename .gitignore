@@ -6,3 +6,4 @@ manga/
 log_error
 database
 tmp/*
+.ropeproject/
