@@ -72,6 +72,7 @@ def download_img(links, title):
             try:
                 urllib.urlretrieve(str(link), os.path.join(directory, file_manga))
                 stampa('  -> scaricato: %s '% (str(link),))
+                sleep(1)
                 break
             except:
                 from time import sleep
@@ -186,7 +187,7 @@ class mangareader:
         return string
         '''
         return self.fetch_tag(self.rtitlechapter)[0]
-    
+
     def number(self, stringa):
         match = self.findnumber1.search(stringa)
         if match :
@@ -197,7 +198,7 @@ class mangareader:
         print 'nessun numero capitolo trovato??'
         return 0
 
-        
+
     def find_manga(self, name):
         '''
          cerca in una pagina per vedere se trova il nome del manga cercato
