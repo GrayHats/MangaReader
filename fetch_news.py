@@ -13,30 +13,32 @@ from datetime import datetime
 def now():
     return datetime.now()
 
+
 def send_mail(body):
     import smtplib
     rows = store.find(Mail)
     for row in rows:
-        body2 = "From: %s\n" %(row.from_addr)
+        body2 = "From: %s\n" % (row.from_addr)
         body2 += "To: %s\n" % (row.to_addr)
-        body2 += "Subject: %s\n\n" %(row.subject,)
+        body2 += "Subject: %s\n\n" % (row.subject,)
         body2 += body
         server = smtplib.SMTP(row.smtp)
         server.sendmail(row.from_addr, [row.to_addr], body2)
         server.quit()
 
 
-if __name__ == "__main__":
-    body= ''
+def main():
+    body = ''
 
     # fetch new links from website
     x = mangareader('http://www.mangareader.net/latest')
     for manga in store.find(Manga):
         name = x.convert_name(manga.name)
         links = x.fetch_chapters_manga(name)
-        if links :
+        if links:
             for link, number in links:
-                if not store.find(Chapter.link, Chapter.link == unicode(link)).count():
+                if not store.find(Chapter.link,
+                                  Chapter.link == unicode(link)).count():
                     new_chapter = store.add(Chapter())
                     new_chapter.link = unicode(link)
                     new_chapter.status = 0
@@ -52,7 +54,7 @@ if __name__ == "__main__":
         for row in rows:
             stampa(' %s' % row.link)
         for row in rows:
-            ## re-check status, just in case..
+            # re-check status, just in case..
             this_chap = store.find(Chapter, Chapter.id == row.id)
             if this_chap[0].status == 2:
                 stampa('Status cambiato per %s' % row.link)
@@ -63,7 +65,7 @@ if __name__ == "__main__":
             store.flush()
             ##
             stampa('\nScarico %s' % row.link)
-            if download_chapter(row.link) :
+            if download_chapter(row.link):
                 row.status = 1
                 row.data = now()
                 row.manga.data = now()
@@ -87,3 +89,7 @@ if __name__ == "__main__":
             body += '\n  --> %s:\n' % (row.link)
     if body:
         send_mail(body)
+
+
+if __name__ == "__main__":
+    main()

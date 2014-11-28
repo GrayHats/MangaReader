@@ -6,7 +6,7 @@ config.cfg   --> database
 '''
 
 
-from mangareader import store, Manga, Mail
+from mangadb import store, Manga, Mail
 
 
 if __name__ == "__main__":

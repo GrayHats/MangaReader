@@ -22,10 +22,10 @@ echo 'deb http://ppa.launchpad.net/storm/ppa/ubuntu natty main' > /etc/apt/sourc
 apt-get install python-storm
 
 
-#create db 
+#create db
 sqlite3 database < database.sql
 
-# run the menu 
+# run the menu
 ./menu.py
 # and put in yours options
 #
@@ -70,6 +70,10 @@ TO-DO-LIST
 #########
 CHANGELOG
 #########
+
+# 0.7 still in progress
+ - syntax beautify del codice
+   - pep8
 
 # 0.6.1  expanded convert_name function to handle more "manganames"
 
