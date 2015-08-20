@@ -2,6 +2,7 @@
 funzioni e classi
 '''
 import urllib
+import requests
 import re
 import sys
 import os
@@ -69,7 +70,7 @@ def createdir(directory):
     os.mkdir(directory)
 
 
-def download_img(links, title):
+def build_cbz(links, title):
     import tarfile
     import shutil
     dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -78,24 +79,23 @@ def download_img(links, title):
     createdir(directory)
     os.chdir(dirmanga)
     for link in links:
-        file_manga = link[link.rfind('/')+1:]
+        link = str(link)
+        # file_manga = link[link.rfind('/')+1:]
+        file_name = os.path.join(directory, link.split('/')[-1])
         for i in range(1, 10):
             try:
-                urllib.urlretrieve(
-                    str(link),
-                    os.path.join(
-                        directory,
-                        file_manga))
-                stampa('  -> scaricato: %s ' % (str(link),))
+                download_file(link, file_name)
+                stampa('  -> scaricato: %s ' % (link,))
                 sleep(1)
                 break
             except:
-                stampa_err('  -> ERRORE nello scaricare: %s\
-                        \nRiprovo' % (str(link),))
+                stampa_err('  -> ERRORE nello scaricare: %s' % (link))
+                stampa_err('  -> impossibile creare %s' % (file_name))
+                stampa_err('Riprovo')
                 sleep(1)
                 continue
             exit('  -> ERRORE nello scaricare: %s\
-                    \nEsco.' % (str(link),))
+                    \nEsco.' % (link,))
 
     try:
         tar = tarfile.open(title+'.cbz', 'w')
@@ -108,6 +108,17 @@ def download_img(links, title):
         sys.exit(-1)
     os.chdir(dirname)
     return 1
+
+
+def download_file(url, local_filename):
+    # NOTE the stream=True parameter
+    r = requests.get(url, stream=True)
+    with open(local_filename, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)
+                f.flush()
+    return local_filename
 
 
 def download_chapter(url_chapter):
@@ -127,7 +138,7 @@ def download_chapter(url_chapter):
         return 0
     # for img in imgs:
     #    stampa('   -> %s' % img)
-    if download_img(imgs, fix_title(title)):
+    if build_cbz(imgs, fix_title(title)):
         return 1
     # sys.exit(-1)
 
