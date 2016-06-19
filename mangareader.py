@@ -70,7 +70,7 @@ def createdir(directory):
     os.mkdir(directory)
 
 
-def build_cbz(links, title):
+def build_cbt(links, title):
     import tarfile
     import shutil
     dirname = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -98,10 +98,10 @@ def build_cbz(links, title):
                     \nEsco.' % (link,))
 
     try:
-        tar = tarfile.open(title+'.cbz', 'w')
+        tar = tarfile.open(title+'.cbt', 'w')
         tar.add(title)
         tar.close()
-        stampa('  Creato %s\n' % (title+'.cbz',))
+        stampa('  Creato %s\n' % (title+'.cbt',))
         shutil.rmtree(title)
     except:
         os.chdir(dirname)
@@ -138,7 +138,7 @@ def download_chapter(url_chapter):
         return 0
     # for img in imgs:
     #    stampa('   -> %s' % img)
-    if build_cbz(imgs, fix_title(title)):
+    if build_cbt(imgs, fix_title(title)):
         return 1
     # sys.exit(-1)
 
